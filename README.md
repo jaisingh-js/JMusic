@@ -1,8 +1,8 @@
-# Turrrr
+# JMusic
 A music WebApp built with plain javascript and web components
 
 
-### Development Roadmap
+## Development Roadmap
 * Search and Play single song.
 * Search List Page.
 * Song Detail Page.
