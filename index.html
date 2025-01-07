@@ -1,16 +1,206 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J Music</title>
-    <link rel="stylesheet" href="style.css">
-    
-</head>
-<body>
-    <div id="app"></div>
-    <!-- <hello-world name="Oye"></hello-world> -->
-    <!-- <sweet-player></sweet-player> -->
-    <script src="src/app.js" type="module"></script>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Music UI</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            /* CSS Variables for Theming */
+            :root {
+                --color-primary: #ea580c; /* Orange */
+                --color-primary-hover: #f97316; /* Lighter Orange */
+                --color-text: #000; /* Light Gray */
+                --color-background: #fff; /* Dark Brown */
+                --color-surface: #fff; /* Darker Brown */
+            }
+
+            *,
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Inter", sans-serif;
+                color: var(--color-text);
+            }
+
+            body {
+                background-color: var(--color-background);
+            }
+
+            .container {
+                display: grid;
+                width: 100vw;
+                height: 100vh;
+                grid-template-rows: auto 1fr auto;
+            }
+
+            .search {
+                display: flex;
+                padding: 1rem;
+                gap: 0.75rem;
+                background-color: var(--color-surface);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .search-input {
+                flex: 1;
+                padding: 0.6rem;
+                border: 1px solid var(--color-primary);
+                border-radius: 6px;
+                outline: none;
+                font-size: 0.9rem;
+                background-color: transparent;
+                color: var(--color-text);
+                transition: border-color 0.2s ease;
+            }
+
+            .search-input:focus {
+                border-color: var(--color-primary-hover);
+            }
+
+            .search-btn {
+                padding: 0.6rem 1.2rem;
+                background-color: var(--color-primary);
+                border: none;
+                border-radius: 6px;
+                color: var(--color-text);
+                font-size: 0.9rem;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+
+            .search-btn:hover {
+                background-color: var(--color-primary-hover);
+            }
+
+            .main {
+                padding: 1rem;
+                overflow-y: auto;
+                background-color: var(--color-background);
+            }
+
+            .grid-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+                align-items: start;
+            }
+
+            .song {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+                max-width: 220px;
+                border: 1px solid var(--color-primary);
+                border-radius: 6px;
+                overflow: hidden;
+                background-color: var(--color-surface);
+                padding: 0.75rem;
+                box-sizing: border-box;
+                transition:
+                    transform 0.2s ease,
+                    box-shadow 0.2s ease;
+                cursor: pointer;
+                height: 100%;
+            }
+
+            .song:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .song img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 4px;
+                aspect-ratio: 1/1;
+            }
+
+            .song-title {
+                margin-top: 0.75rem;
+                font-size: 0.85rem;
+                text-align: center;
+                color: var(--color-text);
+                word-wrap: break-word;
+            }
+
+            .controls {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.75rem 1rem;
+                background-color: var(--color-surface);
+                box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            .control-button {
+                border: none;
+                background: none;
+                padding: 0.5rem;
+                font-size: 1.25rem;
+                cursor: pointer;
+                color: var(--color-primary);
+                transition: color 0.2s ease;
+            }
+
+            .control-button:hover {
+                color: var(--color-primary-hover);
+            }
+
+            #progress {
+                flex: 1;
+                background-color: var(--color-primary);
+                height: 4px;
+                position: relative;
+                border-radius: 2px;
+                margin: 0 1rem;
+                opacity: 0.3; /* Subtle progress bar */
+            }
+
+            .progress-control {
+                position: absolute;
+                height: 100%;
+                width: 30%;
+                background: var(--color-primary);
+                border-radius: 2px;
+                opacity: 1; /* Full opacity for progress */
+            }
+        </style>
+        <script src="app.js" type="module"></script>
+    </head>
+    <body>
+        <div class="container">
+            <form class="search">
+                <input
+                    class="search-input"
+                    type="text"
+                    placeholder="Search song, album or artist..."
+                    onsubmit="findSong()"
+                />
+                <button class="search-btn">Search</button>
+            </form>
+            <div class="main">
+                <div class="grid-container">
+                    <!-- Song items will be dynamically added here -->
+                </div>
+            </div>
+            <div class="controls">
+                <button class="control-button">⏮</button>
+                <button id="pause" class="control-button">⏸</button>
+                <button class="control-button">⏭</button>
+                <div id="progress">
+                    <div class="progress-control"></div>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>
