@@ -28,7 +28,7 @@ searchForm.addEventListener("submit", (e) => {
   findSong();
 });
 
-const song = await searchSong("andhi vaanil");
+const song = await searchSong("punjabi");
 if (song.success) {
   const songs = song.data.results;
   updateSongList(songs);
